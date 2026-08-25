@@ -31,8 +31,8 @@ class NontechnicalInstallationTests(unittest.TestCase):
     def test_git_is_explained_for_a_first_time_user(self) -> None:
         install = self.text("INSTALL.md")
         for phrase in (
-            "Git is an undo history for files",
-            "GitHub is a website that stores a Git project online",
+            "**Git** is an undo history for files",
+            "**GitHub** is a website that stores a Git project online",
             "A **repository**",
             "A **commit** is a named save point",
             "A **push** means putting a new commit onto GitHub",

@@ -1,6 +1,6 @@
 # Install MIRROR — Browser only, No Command Prompt
 
-This is the normal setup path for a person who does **not** know Git and does not want to become a developer just to organize their life.
+This is the default browser-only setup path for a person who does **not** know Git and does not want to become a developer just to organize their life.
 
 Do **not** open Command Prompt, PowerShell, Terminal, Git Bash, or a code editor. Do **not** install Git or GitHub CLI. Do not copy commands, tokens, SSH keys, passwords, recovery codes, or other credentials into ChatGPT.
 
