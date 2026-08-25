@@ -1,0 +1,62 @@
+name: Promote Generated Distribution
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  promote:
+    if: ${{ !startsWith(github.event.head_commit.message, 'Promote generated distribution from') }}
+    runs-on: ubuntu-latest
+    env:
+      SOURCE_SHA: cc0e4cb35f164a981b43374221121bd4afc24375
+      CHANNEL: public-experimental
+      EXPECTED_REPOSITORY: Matthew-Beare/MIRA-Public-Experimental
+    steps:
+      - name: Check out target repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check out canonical source
+        uses: actions/checkout@v4
+        with:
+          repository: Matthew-Beare/MIRA-Personal-Production
+          ref: ${{ env.SOURCE_SHA }}
+          path: canonical
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build and validate exact distribution
+        run: |
+          python3 canonical/scripts/build_distribution.py \
+            --channel "$CHANNEL" \
+            --source-revision "$SOURCE_SHA" \
+            --output "$RUNNER_TEMP/distribution"
+          python3 canonical/scripts/validate_distribution.py \
+            "$RUNNER_TEMP/distribution" \
+            --repository "$EXPECTED_REPOSITORY" \
+            --channel "$CHANNEL" \
+            --source-revision "$SOURCE_SHA"
+          python3 "$RUNNER_TEMP/distribution/scripts/audit_starter_privacy.py" \
+            "$RUNNER_TEMP/distribution/starter"
+      - name: Replace target with generated tree
+        run: |
+          find "$GITHUB_WORKSPACE" -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf -- {} +
+          cp -a "$RUNNER_TEMP/distribution/." "$GITHUB_WORKSPACE/"
+          python3 scripts/validate_distribution.py . \
+            --repository "$EXPECTED_REPOSITORY" \
+            --channel "$CHANNEL" \
+            --source-revision "$SOURCE_SHA"
+      - name: Commit and publish generated tree
+        run: |
+          git config user.name "M.I.R.R.O.R. Distribution Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet && exit 0
+          git commit -m "Promote generated distribution from $SOURCE_SHA"
+          git push origin HEAD:main
