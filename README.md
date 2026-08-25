@@ -6,6 +6,8 @@
 
 MIRROR is a version-controlled personal-operations framework for briefs, persistent state, receipts/orders, planning/accountability, work/context, meal planning, appointments/calendar reconciliation, assets/knowledge, travel/hobbies, and evidence-backed automation.
 
+This repository is **intentionally public** portable source. **Mutable operational state** does not belong in the public upstream. Public releases remain gated by the repository's **public-source audit**, privacy checks, tests, and any required live-provider verification.
+
 ## The naming model
 
 ### MIRROR Layer — reality
