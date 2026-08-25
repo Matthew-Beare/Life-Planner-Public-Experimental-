@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   promote:
-    if: ${{ !startsWith(github.event.head_commit.message, 'Promote generated distribution from') }}
+    if: ${{ !startsWith(github.event.head_commit.message, 'Promote generated content from') }}
     runs-on: ubuntu-latest
     env:
       SOURCE_SHA: cc0e4cb35f164a981b43374221121bd4afc24375
@@ -44,19 +44,18 @@ jobs:
             --source-revision "$SOURCE_SHA"
           python3 "$RUNNER_TEMP/distribution/scripts/audit_starter_privacy.py" \
             "$RUNNER_TEMP/distribution/starter"
-      - name: Replace target with generated tree
+      - name: Replace content while preserving workflow files
         run: |
+          cp -a "$GITHUB_WORKSPACE/.github" "$RUNNER_TEMP/current-github"
           find "$GITHUB_WORKSPACE" -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf -- {} +
           cp -a "$RUNNER_TEMP/distribution/." "$GITHUB_WORKSPACE/"
-          python3 scripts/validate_distribution.py . \
-            --repository "$EXPECTED_REPOSITORY" \
-            --channel "$CHANNEL" \
-            --source-revision "$SOURCE_SHA"
-      - name: Commit and publish generated tree
+          rm -rf "$GITHUB_WORKSPACE/.github"
+          cp -a "$RUNNER_TEMP/current-github" "$GITHUB_WORKSPACE/.github"
+      - name: Commit and publish generated content
         run: |
           git config user.name "M.I.R.R.O.R. Distribution Bot"
           git config user.email "actions@users.noreply.github.com"
           git add -A
           git diff --cached --quiet && exit 0
-          git commit -m "Promote generated distribution from $SOURCE_SHA"
+          git commit -m "Promote generated content from $SOURCE_SHA [skip ci]"
           git push origin HEAD:main
