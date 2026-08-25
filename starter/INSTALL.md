@@ -108,7 +108,7 @@ That `owner/repository` name is safe to give the onboarding assistant. Do not gi
 
 ## Step 3 — Give ChatGPT read access
 
-This lets ChatGPT inspect the repository. It does **not** prove anything can write changes back.
+The ordinary ChatGPT GitHub app is read-only. This lets ChatGPT inspect the repository, but it does **not** prove anything can write changes back.
 
 1. In ChatGPT, open **Settings → Apps**.
 2. Find **GitHub** and choose **Connect**.
